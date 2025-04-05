@@ -19,6 +19,7 @@
 #include "menuCmdID.h"
 #include <atlstr.h>
 #include "DockingFeature/sequenceBoxDlg.h"
+#include "Shlwapi.h"
 
 //
 // The plugin data that Notepad++ needs
@@ -337,7 +338,7 @@ bool ShowHideLinesRoutine(INT_CURRENTEDIT, const char *str, char reveal, BOOL co
 	BOOL rv = TRUE;
 
 	if (str) {
-		struct TextToFind tr;
+		struct Sci_TextToFind tr {};
 		tr.chrg.cpMin = 0;
 		tr.chrg.cpMax = (long)SENDMSGTOCED(currentEdit, SCI_GETLENGTH, 0, 0);
 		tr.lpstrText = str;
@@ -650,7 +651,7 @@ void CopyCutDelRoutine(unsigned flags, char which)
 
 		if (flags & SCDS_COPY && !isError) {
 			for (buflen = 0, ln = 0; ln < lplen; ln++) {
-				struct TextRange tr;
+				struct Sci_TextRange tr {};
 				tr.chrg.cpMin = lps[ln];
 				tr.chrg.cpMax = lpe[ln];
 
@@ -735,7 +736,7 @@ void IniSaveSettings(bool save)
 	const TCHAR keyCaseSensitiveSearch[] = TEXT("CaseSensitiveSearch");
 	const TCHAR keyCapsSeq[] = TEXT("CapsSequence");
 	const TCHAR configFileName[] = TEXT("NppTextViz.ini");
-	TCHAR iniFilePath[MAX_PATH];
+	TCHAR iniFilePath[MAX_PATH]{};
 
 	// initialize Mmenu Item holder
 	miVizWholeWords = FindMenuItem(doUpdateConfWholeWords);
@@ -937,7 +938,7 @@ void doSequenceNext()
 	tchSequence[eol] = '\0';
 	int L1 = 0, L2 = 0;
 	TCHAR *p, *end;
-	char reveal;
+	char reveal = 0;
 	BOOL complementary = FALSE;
 	unsigned searchflags;
 
